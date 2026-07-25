@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log in · Bot Console</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="link-shell">
+  <div class="link-card" style="text-align:left;">
+    <div class="brand" style="justify-content:center; margin-bottom:24px;"><span class="dot"></span> WA Bot Console</div>
+    <h1 style="text-align:center;">Admin login</h1>
+    <p class="subtitle" style="text-align:center;">Sign in to monitor chats and control the bot.</p>
+    <form method="POST" action="/login">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" autocomplete="current-password" required />
+      </div>
+      <button type="submit" style="width:100%;">Log in</button>
+      <% if (error) { %><p class="error"><%= error %></p><% } %>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<%- include('partials/head', { title: 'View Once', active: 'viewonce', loggedIn: true, connected: status.status === 'open' }) %>
+
+<h1>View-once media</h1>
+<p class="subtitle">Automatically captured before it disappears. Stored locally under <code>data/media/viewonce</code>.</p>
+
+<div class="grid">
+  <% items.forEach(v => { %>
+    <div class="panel">
+      <div class="stat-label"><%= v.sender_name %> · <%= new Date(v.timestamp).toLocaleString() %></div>
+      <% if (v.media_type === 'image') { %>
+        <img src="/media/<%= encodeURIComponent(v.media_path) %>" style="width:100%; border-radius:6px; margin-top:10px;" />
+      <% } else { %>
+        <video src="/media/<%= encodeURIComponent(v.media_path) %>" controls style="width:100%; border-radius:6px; margin-top:10px;"></video>
+      <% } %>
+      <% if (v.caption) { %><p style="margin:10px 0 0; font-size:13px;"><%= v.caption %></p><% } %>
+      <a href="/media/<%= encodeURIComponent(v.media_path) %>" download class="btn btn-outline" style="text-decoration:none; display:inline-block; margin-top:10px; padding:6px 12px;">Download</a>
+    </div>
+  <% }) %>
+</div>
+<% if (!items.length) { %>
+  <div class="panel hint">Nothing saved yet. View-once photos and videos sent to any linked chat will show up here automatically.</div>
+<% } %>
+
+<%- include('partials/foot') %>

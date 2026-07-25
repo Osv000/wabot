@@ -1,0 +1,23 @@
+<%- include('partials/head', { title: 'Send message', active: 'send', loggedIn: true, connected: status.status === 'open' }) %>
+
+<h1>Send a message</h1>
+<p class="subtitle">Send as your connected WhatsApp bot to any chat or group ID.</p>
+
+<div class="panel" style="max-width:520px;">
+  <form method="POST" action="/dashboard/send">
+    <div class="field">
+      <label>Recipient (phone number or chat ID)</label>
+      <input type="text" name="to" placeholder="2348012345678 or 1234567890-1234@g.us" value="<%= prefillTo || '' %>" required />
+      <p class="hint">A plain number is treated as a personal chat. Group IDs end in @g.us (see the Chats tab).</p>
+    </div>
+    <div class="field">
+      <label>Message</label>
+      <textarea name="text" required></textarea>
+    </div>
+    <button type="submit">Send</button>
+    <% if (result) { %><p class="hint"><%= result %></p><% } %>
+    <% if (error) { %><p class="error"><%= error %></p><% } %>
+  </form>
+</div>
+
+<%- include('partials/foot') %>

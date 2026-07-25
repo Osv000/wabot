@@ -1,0 +1,24 @@
+<%- include('partials/head', { title: 'Chats', active: 'chats', loggedIn: true, connected: status.status === 'open' }) %>
+
+<h1>Chats</h1>
+<p class="subtitle">Every chat and group the bot has seen a message from.</p>
+
+<div class="panel">
+  <table>
+    <tr><th>Chat</th><th>Type</th><th>Last message</th><th>When</th><th></th></tr>
+    <% chats.forEach(c => { %>
+      <tr>
+        <td><%= c.chat_name %></td>
+        <td><span class="badge <%= c.is_group ? 'group' : 'dm' %>"><%= c.is_group ? 'group' : 'dm' %></span></td>
+        <td><%= (c.last_message_preview || '').slice(0, 60) %></td>
+        <td><%= c.last_message_at ? new Date(c.last_message_at).toLocaleString() : '' %></td>
+        <td><a href="/dashboard/chat/<%= encodeURIComponent(c.chat_id) %>" class="btn btn-outline" style="text-decoration:none; padding:6px 12px; display:inline-block;">Open</a></td>
+      </tr>
+    <% }) %>
+    <% if (!chats.length) { %>
+      <tr><td colspan="5" class="hint">No chats logged yet — send or receive a message to populate this list.</td></tr>
+    <% } %>
+  </table>
+</div>
+
+<%- include('partials/foot') %>

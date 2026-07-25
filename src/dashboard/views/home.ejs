@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Link device · Bot Console</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="topbar">
+  <div class="brand"><span class="dot <%= status.status === 'open' ? 'on' : '' %>"></span> WA Bot Console</div>
+  <a href="/logout" class="btn btn-outline" style="text-decoration:none; padding:8px 16px; font-family: var(--mono); font-size:12px; border:1px solid var(--panel-line); border-radius:6px;">Log out</a>
+</div>
+<div class="link-shell">
+  <div class="link-card" id="card">
+    <div class="signal-rings">
+      <div class="ring"></div><div class="ring"></div><div class="ring"></div>
+      <div class="core"></div>
+    </div>
+
+    <div id="state-open" style="display:none;">
+      <h1>Device linked</h1>
+      <p class="subtitle" id="linked-number">Connected</p>
+      <a href="/dashboard" class="btn" style="text-decoration:none; display:inline-block;">Go to dashboard</a>
+    </div>
+
+    <div id="state-idle">
+      <h1>Link your WhatsApp</h1>
+      <p class="subtitle">Enter the number the bot should run as. It stays linked as a secondary device — your phone remains primary.</p>
+
+      <div class="tabs">
+        <button type="button" class="active" id="tab-phone">Phone number</button>
+        <button type="button" id="tab-qr">QR code</button>
+      </div>
+
+      <div id="phone-box">
+        <form id="link-form">
+          <div class="field" style="text-align:left;">
+            <label>Phone number (with country code, digits only)</label>
+            <input type="text" name="phone" id="phone" placeholder="2348012345678" required />
+          </div>
+          <button type="submit" style="width:100%;" id="link-btn">Get pairing code</button>
+        </form>
+        <div id="pairing-result"></div>
+      </div>
+
+      <div id="qr-box" style="display:none;">
+        <p class="hint">Open WhatsApp → Linked devices → Link a device, then scan.</p>
+        <div id="qr-image"></div>
+      </div>
+
+      <p class="error" id="link-error"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const tabPhone = document.getElementById('tab-phone');
+const tabQr = document.getElementById('tab-qr');
+const phoneBox = document.getElementById('phone-box');
+const qrBox = document.getElementById('qr-box');
+
+tabPhone.addEventListener('click', () => {
+  tabPhone.classList.add('active'); tabQr.classList.remove('active');
+  phoneBox.style.display = ''; qrBox.style.display = 'none';
+});
+tabQr.addEventListener('click', () => {
+  tabQr.classList.add('active'); tabPhone.classList.remove('active');
+  qrBox.style.display = ''; phoneBox.style.display = 'none';
+});
+
+document.getElementById('link-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const phone = document.getElementById('phone').value.trim();
+  const btn = document.getElementById('link-btn');
+  const errorEl = document.getElementById('link-error');
+  errorEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Requesting code...';
+  try {
+    const res = await fetch('/api/link', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ phone }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to request pairing code');
+    document.getElementById('card').classList.add('pending');
+    document.getElementById('pairing-result').innerHTML =
+      '<p class="hint">Open WhatsApp → Linked devices → Link with phone number, then enter:</p>' +
+      '<div class="pairing-code">' + data.code + '</div>';
+  } catch (err) {
+    errorEl.textContent = err.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Get pairing code';
+  }
+});
+
+async function poll() {
+  try {
+    const res = await fetch('/api/status');
+    const data = await res.json();
+    if (data.status === 'open') {
+      document.getElementById('state-idle').style.display = 'none';
+      document.getElementById('state-open').style.display = '';
+      document.getElementById('linked-number').textContent = data.phone ? ('Connected as ' + data.phone.split(':')[0]) : 'Connected';
+      document.getElementById('card').classList.remove('pending');
+    } else if (data.qr) {
+      document.getElementById('qr-image').innerHTML = '<img src="' + data.qrImage + '" width="220" height="220" />';
+    }
+  } catch (e) { /* ignore transient errors */ }
+}
+poll();
+setInterval(poll, 3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<%- include('partials/head', { title: chatId, active: 'chats', loggedIn: true, connected: status.status === 'open' }) %>
+
+<h1><%= chatId %></h1>
+<p class="subtitle"><a href="/dashboard/chats">&larr; back to chats</a> · <a href="/dashboard/send?to=<%= encodeURIComponent(chatId) %>">send message here</a></p>
+
+<div class="panel">
+  <table>
+    <tr><th>Time</th><th>From</th><th>Type</th><th>Message</th></tr>
+    <% messages.forEach(m => { %>
+      <tr>
+        <td style="white-space:nowrap;"><%= new Date(m.timestamp).toLocaleString() %></td>
+        <td><%= m.from_me ? 'you' : m.sender_name %></td>
+        <td><%= m.msg_type %><% if (m.is_view_once) { %> <span class="badge">once</span><% } %></td>
+        <td><%= m.body %></td>
+      </tr>
+    <% }) %>
+    <% if (!messages.length) { %>
+      <tr><td colspan="4" class="hint">No messages logged for this chat yet.</td></tr>
+    <% } %>
+  </table>
+</div>
+
+<%- include('partials/foot') %>

@@ -1,0 +1,43 @@
+<%- include('partials/head', { title: 'Overview', active: 'overview', loggedIn: true, connected: status.status === 'open' }) %>
+
+<h1>Overview</h1>
+<p class="subtitle">Status of your linked WhatsApp bot.</p>
+
+<div class="grid">
+  <div class="panel">
+    <div class="stat-label">Connection</div>
+    <div class="stat-value" style="color: <%= status.status === 'open' ? 'var(--signal)' : 'var(--pending)' %>;">
+      <%= status.status === 'open' ? 'Linked' : status.status %>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="stat-label">Chats tracked</div>
+    <div class="stat-value"><%= chatCount %></div>
+  </div>
+  <div class="panel">
+    <div class="stat-label">Messages logged</div>
+    <div class="stat-value"><%= messageCount %></div>
+  </div>
+  <div class="panel">
+    <div class="stat-label">View-once saved</div>
+    <div class="stat-value"><%= viewOnceCount %></div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="stat-label" style="margin-bottom:14px;">Recent activity</div>
+  <table>
+    <tr><th>Time</th><th>Chat</th><th>From</th><th>Type</th><th>Message</th></tr>
+    <% recent.forEach(m => { %>
+      <tr>
+        <td><%= new Date(m.timestamp).toLocaleString() %></td>
+        <td><%= m.chat_name %> <% if (m.is_group) { %><span class="badge group">group</span><% } %></td>
+        <td><%= m.from_me ? 'you' : m.sender_name %></td>
+        <td><%= m.msg_type %></td>
+        <td><%= (m.body || '').slice(0, 80) %></td>
+      </tr>
+    <% }) %>
+  </table>
+</div>
+
+<%- include('partials/foot') %>
