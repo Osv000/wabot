@@ -1,0 +1,11 @@
+{
+  "name": "wabot-extraction",
+  "version": "1.0.0",
+  "description": "Utility to extract zip files",
+  "scripts": {
+    "extract": "node unzip-automation.js"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10"
+  }
+}
