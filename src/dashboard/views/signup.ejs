@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Set up admin · Bot Console</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<div class="link-shell">
+  <div class="link-card" style="text-align:left;">
+    <div class="brand" style="justify-content:center; margin-bottom:24px;"><span class="dot"></span> WA Bot Console</div>
+    <h1 style="text-align:center;">Create your admin account</h1>
+    <p class="subtitle" style="text-align:center;">This runs once. After you sign up, this page closes permanently and only this login will work.</p>
+    <form method="POST" action="/signup">
+      <div class="field">
+        <label>Username</label>
+        <input type="text" name="username" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" autocomplete="new-password" minlength="6" required />
+        <p class="hint">At least 6 characters.</p>
+      </div>
+      <button type="submit" style="width:100%;">Create account &amp; close signup</button>
+      <% if (error) { %><p class="error"><%= error %></p><% } %>
+    </form>
+  </div>
+</div>
+</body>
+</html>
